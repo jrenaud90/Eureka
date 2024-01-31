@@ -302,7 +302,7 @@ def consolidate(result, final_dir):
 
     # Move files
     for path in result['Local Path']:
-        filename = path.split('/')[-1]
+        filename = path.split(os.path.sep)[-1]
         try:
             shutil.move(path, os.path.join(final_dir, filename))
         except:
