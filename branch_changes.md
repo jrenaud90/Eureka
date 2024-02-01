@@ -2,5 +2,9 @@
 - Fixed bug in S3_data_reduction/background.py where variable type check did not consider np.int32 in a type check.
 - Added functionality to provide os.pardir support (via "/../") in ECF files.
     - Updated HST demo to showcase this feature.
+- Added property attributes to ECF MetaClass to better track and update input/output raw dirs.
+    - Removed code that was duplicating this functionality from elsewhere in the package.
 - Added functionality to provide os.getcwd support (via "\__cwd\__") in ECF files.
     - Updated HST demo to showcase this feature.
+- Improvements to ECF MetaClass __setattr__ method to ensure full functionality of setattr is not lost.
+    - Previously implementation skipped some background python magic that can be nice to use.

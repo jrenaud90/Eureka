@@ -152,8 +152,7 @@ def calibrateJWST(eventlabel, ecf_path=None, s1_meta=None, input_meta=None):
     elif telescope == 'HST':
         log.writelog('There is no Stage 2 for HST - skipping.')
         # Clean up temporary folder
-        shutil.rmtree(os.path.join(meta.topdir,
-                      *meta.outputdir_raw.split(os.sep)))
+        shutil.rmtree(meta.outputdir)
         meta.outputdir = meta.inputdir
         return meta
     else:

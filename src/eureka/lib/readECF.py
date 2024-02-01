@@ -51,6 +51,7 @@ class MetaClass:
         - Mar 2022 Taylor J Bell
             Initial Version based on old readECF code.
         '''
+
         if folder is None:
             folder = '.'+os.sep
 
@@ -69,6 +70,10 @@ class MetaClass:
             # Store each as an attribute
             for param, value in kwargs.items():
                 setattr(self, param, value)
+        
+        # Initialize property attributes for getters and setters
+        self._outputdir_raw = None
+        self._inputdir_raw = None
 
     def __str__(self):
         '''A function to nicely format some outputs when a MetaClass object is
@@ -134,15 +139,22 @@ class MetaClass:
         value : any
             The attribute value
         """
-        if item in ['lines', 'params', 'filename', 'folder']:
-            self.__dict__[item] = value
-            return
 
         # Set the attribute
-        self.__dict__[item] = value
+        super().__setattr__(item, value)
 
-        # Add it to the list of parameters
-        self.__dict__['params'][item] = value
+        # Update the parameter dict, for a subset of attributes.
+
+        # Skip state attributes
+        if item in ['lines', 'params', 'filename', 'folder']:
+            return
+        
+        # Skip private attributes and "__" attributes / methods
+        if item[0] == '_':
+            return
+
+        # Otherwise, add it to the list of parameters
+        self.params[item] = value
 
     def read(self, folder, file):
         """A function to read ECF files
@@ -199,31 +211,31 @@ class MetaClass:
         # Store each as an attribute
         for param, value in self.params.items():
             setattr(self, param, value)
-
-        self.inputdir_raw = self.inputdir
-        self.outputdir_raw = self.outputdir
-
+        
+        # Clean up topdir
         # Replace topdir with current working directory if requested.
         if self.topdir.lower().strip() == '__cwd__':
             self.topdir = os.getcwd()
-
-        # Join inputdir_raw and outputdir_raw to topdir for convenience
-        # Use split to avoid issues from beginning
-        self.inputdir = os.path.join(self.topdir,
-                                     *self.inputdir.split(os.sep))
-        self.outputdir = os.path.join(self.topdir,
-                                      *self.outputdir.split(os.sep))
-        
-        # Remove any quotations, they are no longer needed.
-        self.inputdir = self.inputdir.replace('"', '')
-        self.outputdir = self.outputdir.replace('"', '')
-        self.inputdir_raw = self.inputdir_raw.replace('"', '')
-        self.outputdir_raw = self.outputdir_raw.replace('"', '')
         self.topdir = self.topdir.replace('"', '')
 
-        # Resolve any os.pardir's that may be in input string for paths
-        self.inputdir = os.path.abspath(self.inputdir)
-        self.outputdir = os.path.abspath(self.outputdir)
+        # Initialize raw input/output dirs
+        self._inputdir_raw = self.inputdir
+        self._outputdir_raw = self.outputdir
+
+        # Remove any quotations, they are no longer needed.
+        self._inputdir_raw = self._inputdir_raw.replace('"', '')
+        self._outputdir_raw = self._outputdir_raw.replace('"', '')
+
+        # Update input/output dirs using user-provided raw strong and topdir.
+        # os.sep's allows the user to provided nested directories.
+        # os.path.abs allows the user to provide directories that are above topdir (os.pardir).
+        # For example: /home/User/Data/TargetName/Analysis/../Data/WFC3
+        self.inputdir = os.path.abspath(
+            os.path.join(self.topdir, *self.inputdir_raw.split(os.sep))
+            )
+        self.outputdir = os.path.abspath(
+            os.path.join(self.topdir, *self.outputdir_raw.split(os.sep))
+            )
 
         # Make sure there's a trailing slash at the end of the paths
         if self.inputdir[-1] != os.sep:
@@ -300,3 +312,47 @@ class MetaClass:
                                        '\t'+' '.join(line_segs[2:])+'\n')
                     else:
                         new_file.write(line)
+
+    @property
+    def outputdir_raw(self):
+        return self._outputdir_raw
+    
+    @outputdir_raw.setter
+    def outputdir_raw(self, new_outputdir):
+        if self._outputdir_raw is None:
+            # First time this variable is set. Don't do anything else.
+            self._outputdir_raw = new_outputdir
+        else:
+            # Change to outputdir_raw. Update the outputdir with the new value.
+            # It looks like a change to outputdir_raw after initialization is not common. Only happens in tests.
+            # But continue to support it in case it breaks others code.
+            self._outputdir_raw = new_outputdir
+            self.outputdir = \
+                os.path.abspath(
+                    os.path.join(self.topdir, *new_outputdir.split(os.sep))
+                    )
+            # Make sure there's a trailing slash at the end of the paths
+            if self.outputdir[-1] != os.sep:
+                self.outputdir += os.sep
+    
+    @property
+    def inputdir_raw(self):
+        return self._inputdir_raw
+    
+    @inputdir_raw.setter
+    def inputdir_raw(self, new_inputdir):
+        if self._inputdir_raw is None:
+            # First time this variable is set. Don't do anything else.
+            self._inputdir_raw = new_inputdir
+        else:
+            # Change to inputdir_raw. Update the inputdir with the new value.
+            # It looks like a change to inputdir_raw after initialization is not common. Only happens in tests.
+            # But continue to support it in case it breaks others code.
+            self._inputdir_raw = new_inputdir
+            self.inputdir = \
+                os.path.abspath(
+                    os.path.join(self.topdir, *new_inputdir.split(os.sep))
+                    )
+            # Make sure there's a trailing slash at the end of the paths
+            if self.inputdir[-1] != os.sep:
+                self.inputdir += os.sep

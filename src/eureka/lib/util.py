@@ -222,7 +222,7 @@ def makedirectory(meta, stage, counter=None, **kwargs):
     """
     # This code allows the input and output files to be stored outside
     # of the Eureka! folder
-    rootdir = os.path.join(meta.topdir, *meta.outputdir_raw.split(os.sep))
+    rootdir = meta.outputdir
     if rootdir[-1] != os.sep:
         rootdir += os.sep
 
@@ -297,7 +297,7 @@ def pathdirectory(meta, stage, run, old_datetime=None, **kwargs):
 
     # This code allows the input and output files to be stored outside
     # of the Eureka! folder
-    rootdir = os.path.join(meta.topdir, *meta.outputdir_raw.split(os.sep))
+    rootdir = meta.outputdir
     if rootdir[-1] != os.sep:
         rootdir += os.sep
 
