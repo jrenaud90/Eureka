@@ -50,7 +50,7 @@ testing_model   False # Boolean, set True to only inject a model source of syste
 hide_plots      True # If True, plots will automatically be closed rather than popping up
 
 # Project directory
-topdir          ../tests
+topdir          __cwd__
 
 # Directories relative to project dir
 inputdir        /data/JWST-Sim/NIRCam/Stage4/    # The folder containing the outputs from Eureka!'s S3 or JWST's S3 pipeline (will be overwritten if calling S3 and S4 sequentially)

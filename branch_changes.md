@@ -8,3 +8,6 @@
     - Updated HST demo to showcase this feature.
 - Improvements to ECF MetaClass __setattr__ method to ensure full functionality of setattr is not lost.
     - Previously implementation skipped some background python magic that can be nice to use.
+- Fixed WinOS pathing and permission issues in test files.
+    - Made additional changes to make tests OS agnostic and hopefully easier to maintain.
+    - Fixed issue where temporary log files were being accessed by multiple processes (leading to permission errors).

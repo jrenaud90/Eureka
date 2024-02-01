@@ -47,7 +47,7 @@ hide_plots		True        # If True, plots will automatically be closed rather tha
 verbose         False       # If True, more details will be printed about steps
 
 # Project directory
-topdir                  ../tests
+topdir                  __cwd__
 
 # Directories relative to project dir
 inputdir               /data/JWST-Sim/MIRI/Stage3/

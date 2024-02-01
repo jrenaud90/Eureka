@@ -33,7 +33,7 @@ testing_S2				False
 hide_plots				True	# If True, plots will automatically be closed rather than popping up
 
 # Project directory
-topdir                  ../tests
+topdir                  __cwd__
 
 # Directories relative to project dir
 inputdir               /data/JWST-Sim/MIRI/Stage1/

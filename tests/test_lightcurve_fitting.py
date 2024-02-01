@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import os
 import sys
+import time
 
 sys.path.insert(0, '..'+os.sep+'src'+os.sep)
 from eureka.S5_lightcurve_fitting import models, simulations
@@ -14,9 +15,16 @@ from eureka.S5_lightcurve_fitting import s5_fit
 meta = MetaClass()
 meta.eventlabel = 'NIRCam'
 
+TEST_DIR = os.path.dirname(os.path.realpath(__file__))
 
 class TestModels(unittest.TestCase):
     """Tests for the models.py module"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self._logs = []
+
     def setUp(self):
         """Setup for the tests"""
         # Set time to use for evaluations
@@ -119,7 +127,9 @@ class TestModels(unittest.TestCase):
             if params.dict[key][1] in ['free', 'shared', 'white_free',  
                                        'white_fixed']:
                 freenames.append(key)
-        log = logedit.Logedit(f'.{os.sep}data{os.sep}test.log')
+        log_name = os.path.join(TEST_DIR, 'data', f'test_{id(self)}-{time.time()}.log')
+        self._logs.append(log_name)
+        log = logedit.Logedit(log_name)
         self.e_model = models.BatmanEclipseModel(parameters=params,
                                                  name='transit', fmt='r--',
                                                  log=log,
@@ -127,9 +137,6 @@ class TestModels(unittest.TestCase):
                                                  longparamlist=longparamlist,
                                                  nchan=1,
                                                  paramtitles=paramtitles)
-
-        # Remove the temporary log file
-        os.system(f"rm .{os.sep}data{os.sep}test.log")
 
         # Evaluate and test output
         self.e_model.time = self.time
@@ -169,7 +176,9 @@ class TestModels(unittest.TestCase):
             if params.dict[key][1] in ['free', 'shared', 'white_free',  
                                        'white_fixed']:
                 freenames.append(key)
-        log = logedit.Logedit(f'.{os.sep}data{os.sep}test.log')
+        log_name = os.path.join(TEST_DIR, 'data', f'test_{id(self)}-{time.time()}.log')
+        self._logs.append(log_name)
+        log = logedit.Logedit(log_name)
         self.t_model = models.BatmanTransitModel(parameters=params,
                                                  name='transit', fmt='r--',
                                                  freenames=freenames,
@@ -191,9 +200,6 @@ class TestModels(unittest.TestCase):
                                            nchan=1, paramtitles=paramtitles,
                                            transit_model=self.t_model,
                                            eclipse_model=self.e_model)
-
-        # Remove the temporary log file
-        os.system(f"rm .{os.sep}data{os.sep}test.log")
 
         # Evaluate and test output
         self.phasecurve.time = self.time
@@ -230,6 +236,11 @@ class TestModels(unittest.TestCase):
         self.exp_model.time = self.time
         vals = self.exp_model.eval()
         self.assertEqual(vals.size, self.time.size)
+
+    def __del__(self):
+        # Remove log files
+        for log_name in self._logs:
+            os.remove(log_name)
 
 
 class TestParameters(unittest.TestCase):

@@ -27,7 +27,7 @@ testing_S6		False
 hide_plots      True # If True, plots will automatically be closed rather than popping up
 
 # Project directory
-topdir          ../tests
+topdir          __cwd__
 
 # Model to plot overtop (csv with col 1 as wavelength in microns, col 2 in the same units as the plotted spectrum, any headers preceded by a #)
 model_spectrum	None

@@ -50,7 +50,7 @@ testing_model   False # Boolean, set True to only inject a model source of syste
 hide_plots      True # If True, plots will automatically be closed rather than popping up
 
 # Project directory
-topdir          ../tests
+topdir          __cwd__
 
 # Directories relative to project dir
 inputdir        /data/JWST-Sim/NIRSpec/Stage4/

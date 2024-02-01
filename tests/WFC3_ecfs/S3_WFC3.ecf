@@ -63,7 +63,7 @@ save_fluxdata   False		# Save FluxData outputs for debugging or use with other t
 verbose         False       # If True, more details will be printed about steps
 
 # Project directory
-topdir          ../tests
+topdir          __cwd__
 
 # Directories relative to project dir
 inputdir        /data/WFC3/ima # The folder containing the outputs from Eureka!'s S2 or JWST's S2 pipeline (will be overwritten if calling S2 and S3 sequentially)

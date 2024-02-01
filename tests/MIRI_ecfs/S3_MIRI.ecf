@@ -46,7 +46,7 @@ save_output     True        # Save outputs for use in S4
 verbose         False       # If True, more details will be printed about steps
 
 # Project directory
-topdir                  ../tests
+topdir                 __cwd__
 
 # Directories relative to project dir
 inputdir               /data/JWST-Sim/MIRI/Stage2/

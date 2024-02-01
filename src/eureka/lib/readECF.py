@@ -214,17 +214,28 @@ class MetaClass:
         
         # Clean up topdir
         # Replace topdir with current working directory if requested.
-        if self.topdir.lower().strip() == '__cwd__':
-            self.topdir = os.getcwd()
-        self.topdir = self.topdir.replace('"', '')
+        self.topdir = self.topdir.replace('__cwd__', os.getcwd())
+        self.topdir = self.topdir.replace('__CWD__', os.getcwd())
 
         # Initialize raw input/output dirs
         self._inputdir_raw = self.inputdir
         self._outputdir_raw = self.outputdir
 
-        # Remove any quotations, they are no longer needed.
-        self._inputdir_raw = self._inputdir_raw.replace('"', '')
-        self._outputdir_raw = self._outputdir_raw.replace('"', '')
+        # Perform cleanups on paths
+        for path_attr in ['topdir', '_inputdir_raw', '_outputdir_raw']:
+            path = getattr(self, path_attr)
+            # Remove any quotations, they are no longer needed after the file has been parsed for spaces.
+            path = path.replace('"', '')
+
+            # Make replacements for os.sep that is agnostic to what format the user provided.
+            # We need to do this placeholder hack otherwise subsequent replaces may double up on os.sep's
+            path = path.replace('/', '__SEP_PLACEHOLDER__')     # Unix-Like input
+            path = path.replace('\\\\', '__SEP_PLACEHOLDER__')  # Sorta-Windows-like input (double \)
+            path = path.replace('\\', '__SEP_PLACEHOLDER__')    # Windows-like input (single \)
+
+            # Convert to correct separator and update attribute
+            path = path.replace('__SEP_PLACEHOLDER__', os.sep)
+            setattr(self, path_attr, path)
 
         # Update input/output dirs using user-provided raw strong and topdir.
         # os.sep's allows the user to provided nested directories.
@@ -319,21 +330,34 @@ class MetaClass:
     
     @outputdir_raw.setter
     def outputdir_raw(self, new_outputdir):
-        if self._outputdir_raw is None:
-            # First time this variable is set. Don't do anything else.
-            self._outputdir_raw = new_outputdir
-        else:
-            # Change to outputdir_raw. Update the outputdir with the new value.
-            # It looks like a change to outputdir_raw after initialization is not common. Only happens in tests.
-            # But continue to support it in case it breaks others code.
-            self._outputdir_raw = new_outputdir
-            self.outputdir = \
-                os.path.abspath(
-                    os.path.join(self.topdir, *new_outputdir.split(os.sep))
-                    )
-            # Make sure there's a trailing slash at the end of the paths
-            if self.outputdir[-1] != os.sep:
-                self.outputdir += os.sep
+        
+        if new_outputdir is None:
+            return
+
+        # Clean up input
+        # Remove any quotations, they are no longer needed after the file has been parsed for spaces.
+        new_outputdir = new_outputdir.replace('"', '')
+
+        # Make replacements for os.sep that is agnostic to what format the user provided.
+        # We need to do this placeholder hack otherwise subsequent replaces may double up on os.sep's
+        new_outputdir = new_outputdir.replace('/', '__SEP_PLACEHOLDER__')     # Unix-Like input
+        new_outputdir = new_outputdir.replace('\\\\', '__SEP_PLACEHOLDER__')  # Sorta-Windows-like input (double \)
+        new_outputdir = new_outputdir.replace('\\', '__SEP_PLACEHOLDER__')  # Windows-like input (single \)
+
+        # Convert to correct separator and update attribute
+        new_outputdir = new_outputdir.replace('__SEP_PLACEHOLDER__', os.sep)
+
+        # Change to outputdir_raw. Update the outputdir with the new value.
+        # It looks like a change to outputdir_raw after initialization is not common. Only happens in tests.
+        # But continue to support it in case it breaks others code.
+        self._outputdir_raw = new_outputdir
+        self.outputdir = \
+            os.path.abspath(
+                os.path.join(self.topdir, *new_outputdir.split(os.sep))
+                )
+        # Make sure there's a trailing slash at the end of the paths
+        if self.outputdir[-1] != os.sep:
+            self.outputdir += os.sep
     
     @property
     def inputdir_raw(self):
@@ -341,18 +365,31 @@ class MetaClass:
     
     @inputdir_raw.setter
     def inputdir_raw(self, new_inputdir):
-        if self._inputdir_raw is None:
-            # First time this variable is set. Don't do anything else.
-            self._inputdir_raw = new_inputdir
-        else:
-            # Change to inputdir_raw. Update the inputdir with the new value.
-            # It looks like a change to inputdir_raw after initialization is not common. Only happens in tests.
-            # But continue to support it in case it breaks others code.
-            self._inputdir_raw = new_inputdir
-            self.inputdir = \
-                os.path.abspath(
-                    os.path.join(self.topdir, *new_inputdir.split(os.sep))
-                    )
-            # Make sure there's a trailing slash at the end of the paths
-            if self.inputdir[-1] != os.sep:
-                self.inputdir += os.sep
+        
+        if new_inputdir is None:
+            return
+
+        # Clean up input
+        # Remove any quotations, they are no longer needed after the file has been parsed for spaces.
+        new_inputdir = new_inputdir.replace('"', '')
+
+        # Make replacements for os.sep that is agnostic to what format the user provided.
+        # We need to do this placeholder hack otherwise subsequent replaces may double up on os.sep's
+        new_inputdir = new_inputdir.replace('/', '__SEP_PLACEHOLDER__')     # Unix-Like input
+        new_inputdir = new_inputdir.replace('\\\\', '__SEP_PLACEHOLDER__')  # Sorta-Windows-like input (double \)
+        new_inputdir = new_inputdir.replace('\\', '__SEP_PLACEHOLDER__')  # Windows-like input (single \)
+
+        # Convert to correct separator and update attribute
+        new_inputdir = new_inputdir.replace('__SEP_PLACEHOLDER__', os.sep)
+
+        # Change to inputdir_raw. Update the inputdir with the new value.
+        # It looks like a change to inputdir_raw after initialization is not common. Only happens in tests.
+        # But continue to support it in case it breaks others code.
+        self._inputdir_raw = new_inputdir
+        self.inputdir = \
+            os.path.abspath(
+                os.path.join(self.topdir, *new_inputdir.split(os.sep))
+                )
+        # Make sure there's a trailing slash at the end of the paths
+        if self.inputdir[-1] != os.sep:
+            self.inputdir += os.sep
