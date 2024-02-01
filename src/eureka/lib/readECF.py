@@ -187,6 +187,7 @@ class MetaClass:
             # Split off the name and remove all spaces except quoted substrings
             # Also keep quotation marks for things that need to be escaped
             # (e.g. max is a built-in funciton)
+            # The space in ' '.join allows for spaces in quoted directory paths.
             val = ' '.join(shlex.split(line, posix=False)[1:])
             try:
                 val = eval(val)
@@ -208,6 +209,14 @@ class MetaClass:
                                      *self.inputdir.split(os.sep))
         self.outputdir = os.path.join(self.topdir,
                                       *self.outputdir.split(os.sep))
+        
+        # Remove any quotations, they are no longer needed.
+        self.inputdir = self.inputdir.replace('"', '')
+        self.outputdir = self.outputdir.replace('"', '')
+
+        # Resolve any os.pardir's that may be in input string for paths
+        self.inputdir = os.path.abspath(self.inputdir)
+        self.outputdir = os.path.abspath(self.outputdir)
 
         # Make sure there's a trailing slash at the end of the paths
         if self.inputdir[-1] != os.sep:
