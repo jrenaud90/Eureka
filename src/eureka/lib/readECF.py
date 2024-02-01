@@ -213,10 +213,15 @@ class MetaClass:
         # Remove any quotations, they are no longer needed.
         self.inputdir = self.inputdir.replace('"', '')
         self.outputdir = self.outputdir.replace('"', '')
+        self.inputdir_raw = self.inputdir_raw.replace('"', '')
+        self.outputdir_raw = self.outputdir_raw.replace('"', '')
+        self.topdir = self.topdir.replace('"', '')
 
         # Resolve any os.pardir's that may be in input string for paths
         self.inputdir = os.path.abspath(self.inputdir)
         self.outputdir = os.path.abspath(self.outputdir)
+        self.inputdir_raw = os.path.abspath(self.inputdir_raw)
+        self.outputdir_raw = os.path.abspath(self.outputdir_raw)
 
         # Make sure there's a trailing slash at the end of the paths
         if self.inputdir[-1] != os.sep:
