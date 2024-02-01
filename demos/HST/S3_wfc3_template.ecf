@@ -62,7 +62,8 @@ save_output     True        # Save outputs for use in S4
 verbose         True        # If True, more details will be printed about steps
 
 # Project directory
-topdir          /home/User/Data/TargetName/WFC3/
+topdir            __cwd__                             # Directory where ECF files are held. Used as prefix for inputdir and outputdir.
+# topdir          /home/User/Data/TargetName/WFC3/    # User can provide exact path or use __cwd__ to set to current working directory.
 
 # Directories relative to project dir
 inputdir        IMA # The folder containing the data files from HST

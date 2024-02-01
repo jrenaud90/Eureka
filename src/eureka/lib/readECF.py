@@ -223,6 +223,10 @@ class MetaClass:
         self.inputdir_raw = os.path.abspath(self.inputdir_raw)
         self.outputdir_raw = os.path.abspath(self.outputdir_raw)
 
+        # Replace topdir with current working directory if requested.
+        if self.topdir.lower() == '__cwd__':
+            self.topdir = os.getcwd()
+
         # Make sure there's a trailing slash at the end of the paths
         if self.inputdir[-1] != os.sep:
             self.inputdir += os.sep
