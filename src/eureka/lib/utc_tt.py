@@ -69,7 +69,14 @@ def leapdates(rundir, log):
     if not use_fallback:
         ls = np.zeros(len(table))
         for i in range(len(table)):
-            ls[i] = float(table[i].split('\t')[0])
+            line_str = table[i].split('\t')[0]
+
+            # Correct for blank lines in document (per nist instructions, "A blank line should be ignored.")
+            if line_str.strip() == '':
+                continue
+            
+            ls[i] = float(line_str)
+
         jd = ls/86400+2415020.5
         return jd
     else:
