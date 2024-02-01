@@ -187,7 +187,7 @@ class MetaClass:
             # Split off the name and remove all spaces except quoted substrings
             # Also keep quotation marks for things that need to be escaped
             # (e.g. max is a built-in funciton)
-            val = ''.join(shlex.split(line, posix=False)[1:])
+            val = ' '.join(shlex.split(line, posix=False)[1:])
             try:
                 val = eval(val)
             except:
