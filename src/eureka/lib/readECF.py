@@ -4,6 +4,9 @@ import shlex
 import numpy as np
 
 
+IN_WIN_OS = os.name == 'nt'
+
+
 class MetaClass:
     '''A class to hold Eureka! metadata.
 
@@ -179,7 +182,8 @@ class MetaClass:
                 cleanlines.append(line)
 
         for line in cleanlines:
-            name = shlex.split(line)[0]
+            # FINDME: Can the posix here be set to always be `false` as is the case in the next code-line?
+            name = shlex.split(line, posix=(not IN_WIN_OS))[0]
             # Split off the name and remove all spaces except quoted substrings
             # Also keep quotation marks for things that need to be escaped
             # (e.g. max is a built-in funciton)
