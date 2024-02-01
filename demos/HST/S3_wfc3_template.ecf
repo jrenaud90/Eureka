@@ -66,5 +66,6 @@ topdir            __cwd__                             # Directory where ECF file
 # topdir          /home/User/Data/TargetName/WFC3/    # User can provide exact path or use __cwd__ to set to current working directory.
 
 # Directories relative to project dir
-inputdir        IMA # The folder containing the data files from HST
+inputdir        IMA               # The folder containing the data files from HST
+# inputdir      /../DATA/IMA      # You can use ".." and your operating systems directory seperators to specify a path above topdir.
 outputdir       Stage3

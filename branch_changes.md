@@ -1,4 +1,6 @@
-- Fixed pathing bugs that were related to WinOS file structure.
-- Fixed bug in S3_data_reduction/background.py where variable type check did not consider np.int32.
+- Fixed some pathing bugs that were related to WinOS file structure.
+- Fixed bug in S3_data_reduction/background.py where variable type check did not consider np.int32 in a type check.
 - Added functionality to provide os.pardir support (via "/../") in ECF files.
+    - Updated HST demo to showcase this feature.
 - Added functionality to provide os.getcwd support (via "\__cwd\__") in ECF files.
+    - Updated HST demo to showcase this feature.

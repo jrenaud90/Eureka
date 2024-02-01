@@ -203,6 +203,10 @@ class MetaClass:
         self.inputdir_raw = self.inputdir
         self.outputdir_raw = self.outputdir
 
+        # Replace topdir with current working directory if requested.
+        if self.topdir.lower().strip() == '__cwd__':
+            self.topdir = os.getcwd()
+
         # Join inputdir_raw and outputdir_raw to topdir for convenience
         # Use split to avoid issues from beginning
         self.inputdir = os.path.join(self.topdir,
@@ -220,12 +224,6 @@ class MetaClass:
         # Resolve any os.pardir's that may be in input string for paths
         self.inputdir = os.path.abspath(self.inputdir)
         self.outputdir = os.path.abspath(self.outputdir)
-        self.inputdir_raw = os.path.abspath(self.inputdir_raw)
-        self.outputdir_raw = os.path.abspath(self.outputdir_raw)
-
-        # Replace topdir with current working directory if requested.
-        if self.topdir.lower() == '__cwd__':
-            self.topdir = os.getcwd()
 
         # Make sure there's a trailing slash at the end of the paths
         if self.inputdir[-1] != os.sep:
