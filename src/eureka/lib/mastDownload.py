@@ -305,7 +305,7 @@ def consolidate(result, final_dir):
         filename = path.split(os.path.sep)[-1]
         try:
             shutil.move(path, os.path.join(final_dir, filename))
-        except:
+        except FileNotFoundError:
             print(f"File not found: {path}")
     return
 
